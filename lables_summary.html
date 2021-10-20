@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title></title>
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+	<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
+  <body>
+
+    <div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			
+			<div class="jumbotron">
+				<h2>
+					Expense Calculator
+				</h2>
+				<p>
+					This is a simple way to manage your expenses and funds
+				</p>
+				<button type="button" class="btn btn-primary" onclick="location.href='index_1.html';">
+					Home
+				</button>
+			</div>
+			
+		</div>
+	</div>
+	
+	
+	<div class="row">
+		<div class="col-md-12">
+			<div class="card">
+				<div class="card-header"> <h2>
+				Lable Summary
+				</h2>
+			</div>
+			<div class="card-body">
+				<table class="table table-bordered table-striped">
+				 <thead>
+					<tr>
+						<th scope="col">Label Id</th>
+					  <th scope="col">Label Name</th>
+					  <th scope="col">Action</th>
+					 </tr>
+				 </thead>
+				  <tbody class="labeldata">
+				 
+					
+				</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	
+	
+		
+		</div>
+	</div>
+	
+</div>
+
+<!-- Edit Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="myModalLabel">Update Data</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+		<div class="col-md-6">
+			
+			<Input type="hidden" class="form-control" id="edit_id" >
+		 </div>
+         <div class="col-md-6">
+			<label for="">Label Name</label>
+			<Input type="text" class="form-control" id="edit_name">
+		 </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary update_label">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+	
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+	
+	<script>
+		$(document).ready(function(){
+				getdata();
+				$(document).on("click","#btedit",function(){
+				
+				  var label_id=$(this).closest('tr').find('.labelid').text();
+				  var label_name=$(this).closest('tr').find('.labelnam').text();
+					alert(label_id);
+					$.ajax({
+								type: "GET",
+								url: "fetch_label1.php",
+								data:{
+								     'label_id':label_id,
+									},
+								success: function(response){
+										alert("hi");
+									$.each(response,function(key,value){
+										$('#edit_id').val(label_id);
+										$('#edit_name').val(label_name);
+									});
+									$('#myModal').modal('show');
+								}
+							});
+				 
+						
+				});
+				
+				$(document).on("click",".update_label",function(e){
+				            e.preventDefault();
+							
+					var label_id=$('#edit_id').val();
+					var label_name=$('#edit_name').val();
+					
+					if(label_name!='')
+					{
+						$.ajax({
+								type: "GET",
+								url: "Update_label.php",
+								data:{
+								     'label_id':label_id,
+									 'label_name':label_name,
+									},
+								success: function(response){
+										
+									$.each(response,function(key,value){
+										$('#edit_id').val(label_id);
+										$('#edit_name').val(label_name);
+									});
+									alert("Done");
+									$('#myModal').modal('hide');
+									getdata();
+								}
+								
+							});
+						}
+						else
+						{
+							alert("enter value");
+						}
+				 
+						
+				});
+				
+				$(document).on("click","#delb",function(){
+				
+				  
+				  var label_name=$(this).closest('tr').find('.labelnam').text();
+				 
+				 
+					$.ajax({
+								type: "GET",
+								url: "delete_label.php",
+								data:{
+								     'label_name':label_name,
+								},
+								success: function(response){
+									alert(response);
+								}
+							});
+					});
+				
+				
+		});
+		function getdata()
+		{
+			$.ajax({
+				type: "GET",
+				url: "fetch_labeln.php",
+				success: function(response){
+					$.each(response,function(key,value){
+							console.log(value);
+						$('.labeldata').append(
+							'<tr>'+
+								'<td class="labelid">'+ value['label_id']+'</td>\
+								<td class="labelnam">'+ value['label_name']+'</td>\
+								<td>\
+									<button   class="btn btn-primary btëdit" type="button" id="btedit">edit</button>\
+									<button  id="delb" class="btn btn-danger" type="button" name="delb">delete</button>\
+								</td>\
+							</tr>')
+					});
+				}
+			
+			})
+		}
+		
+		
+	</script>
+	
+	</script>
+  </body>
+</html>

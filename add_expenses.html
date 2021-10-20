@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title></title>
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+	
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+		
+	
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/style.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+    <div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			
+			<div class="jumbotron">
+				<h2>
+					Expense Calculator
+				</h2>
+				<p>
+					This is a simple way to manage your expenses and funds
+				</p>
+				<button type="submit" class="btn btn-primary" name="submit_home" onclick="location.href='index_1.html';">
+					Home
+				</button>
+			</div>
+			
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-4">
+		<h2>
+				Manage Expenses
+		</h2>
+			
+		<form role="form">
+				<div class="form-group">
+					 
+					<label for="name_l">
+						Select Item
+					</label>
+					<select class="form-control" name="expenselabel" id="explabel">
+											
+					</select>
+					
+					<label for="expdate_l">
+						Enter date
+					</label>
+					<input type="date" class="form-control" id="expdate" name="expdate"></input>
+					<label for="expamount_l">
+						Expense Amount
+					</label>
+					<div class="input-group">
+						<span class="input-group-addon">Rs</span>
+						<input type="text" class="form-control"  name="expamount" id="expamount"></input>
+						<span class="input-group-addon">.00</span>
+					</div>
+					
+				<button type="submit" class="btn btn-primary" name="save_data" id="save_data">
+					Save
+				</button>
+				<button type="button" class="btn btn-info" onclick="location.href='expense_summary.html';">
+					Summary
+				</button>
+			</form>
+		</div>
+		
+		</div>
+	</div>
+	
+</div>
+
+   
+	<script>
+	
+			$(document).ready(function(){
+				
+				  
+				 getdata();
+ 
+				$('#save_data').click(function(e){
+								
+								e.preventDefault();
+								
+							var selectedText = $("#explabel").find("option:selected").text();
+							var selectedValue = $("#explabel").val();
+							var date=$("#expdate").val();
+							var amount=$("#expamount").val();
+							
+							if ((date == "") ||(selectedValue=="")||(amount==""))
+							{
+										alert("values are empty");
+							}
+							else
+							{
+								if (isNaN(amount)) {
+									alert( "amount not valid");
+								} 
+								else
+								{					
+										
+									$.ajax({
+										url:"expense_insert.php",
+										method:"GET",
+										data:{
+										'selectedValue':selectedValue,
+										'date':date,
+										'amount':amount,
+										},
+										beforeSend:function()
+										{
+											$('#save_data').attr('disabled', 'disabled');
+										},
+										success:function(data)
+										{
+											$('#save_data').attr('disabled', false);
+											console.log(data);
+											alert("Your expense added");
+													
+										}
+									})
+							}
+						}
+
+					});
+	
+
+	});
+function getdata(){
+$.ajax({  
+					url: "fetch_labeln.php",  
+					method:"GET",
+					value:{action:'listfetch'},
+					success: function(response){
+								$.each(response,function(key,value){
+										console.log(value['label_name']);
+										
+										
+									$('#explabel').append('<option value='+value['label_name']+'>'+value['label_name']+'</option>');
+						 
+					});  
+					}
+				}); 
+	}
+	</script>
+  </body>
+</html>

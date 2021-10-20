@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title></title>
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+    <div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			
+			<div class="jumbotron">
+				<h2>
+					Expense Calculator
+				</h2>
+				<p>
+					This is a simple way to manage your expenses and funds
+				</p>
+				<button type="button" class="btn btn-info" onclick="location.href='index_1.html';">
+					Home
+				</button>
+			</div>
+			
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-4">
+		<h2>
+				Add Lables
+		</h2>
+			
+		<form role="form" >
+				<div class="form-group">
+					 
+					<label for="name">
+						Enter Your Item Name
+					</label>
+					<input type="text" class="form-control" id="labelname" placeholder="item" aria-describedby="basic-addon2" name="labelname"/>
+				</div>
+				
+				<button type="submit" class="btn btn-primary" id ="save_data" name="save_data">
+					Save
+				</button>
+				<button type="button" class="btn btn-info" onclick="location.href='lables_summary.html';">
+					Summary
+				</button>
+			</form>
+		</div>
+			
+		</div>
+	</div>
+	
+</div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/scripts.js"></script>
+	
+	<script>
+	$(document).ready(function(){
+				
+				  
+				
+ 
+				$('#save_data').click(function(e){
+								
+								e.preventDefault();
+								
+							
+						var label_name=$("#labelname").val();
+							
+						
+						if (label_name == "")
+						{
+										alert("values are empty");
+						}
+						else
+						{
+							console.log(label_name);
+							$.ajax({
+								url:"test.php",
+								method:"GET",
+								data:{
+								
+								'label_name':label_name,
+								},
+								beforeSend:function()
+								{
+									$('#save_data').attr('disabled', 'disabled');
+								},
+								success:function(data)
+								{
+									$('#save_data').attr('disabled', false);
+									console.log(data);
+									alert("Your label name added");
+											
+								}
+							})
+						}
+					});
+	
+
+	
+
+	
+
+});
+	</script>
+  </body>
+</html>

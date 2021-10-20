@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title></title>
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+	<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
+  <body>
+
+    <div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			
+			<div class="jumbotron">
+				<h2>
+					Expense Calculator
+				</h2>
+				<p>
+					This is a simple way to manage your expenses and funds
+				</p>
+				<button type="submit" class="btn btn-primary" name="submit_home" onclick="location.href='index_1.html';">
+					Home
+				</button>
+			</div>
+			
+		</div>
+	</div>
+	<div class="row">
+	<div class="col-md-12">
+			<div class="card">
+				<div class="card-header"> <h2>
+				Expense Summary
+		</h2>
+	</div>
+	<div class="card-body">
+				<table class="table table-bordered table-striped">
+				 <thead>
+					<tr>
+						<th scope="col">Transid</th>
+					  <th scope="col">Date</th>
+					  <th scope="col">Label Name</th>
+					  <th scope="col">Amount</th>
+					  <th scope="col">Action</th>
+					 </tr>
+				 </thead>
+				  <tbody class="expdata">
+				 
+					
+				</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="myModalLabel">Update Data</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+				<input type="hidden" class="form-control" id="edit_id" ></input>
+        <label for="name_l">
+						 Item
+					</label>
+					
+					<input type="text" class="form-control" id="edit_name" ></input>
+					<label for="expdate_l">
+						Enter date
+					</label>
+					<input type="date" class="form-control" id="edit_date" name="expdate"></input>
+					<label for="expamount_l">
+						Expense Amount
+					</label>
+					<div class="input-group">
+						<span class="input-group-addon">Rs</span>
+						<input type="text" class="form-control"  name="expamount" id="edit_amt"></input>
+						<span class="input-group-addon">.00</span>
+					</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+	
+	
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+	
+	<script>
+		$(document).ready(function(){
+				getdata();
+				$(document).on("click","#btedit",function(){
+				
+				 var exp_id=$(this).closest('tr').find('.expid').text();
+				
+					alert(exp_id);
+					$.ajax({
+								type: "GET",
+								url: "fetch_expense1.php",
+								data:{
+								     'exp_id':exp_id,
+									},
+								success: function(response){
+										alert("hi");
+									$.each(response,function(key,value){
+										$('#edit_id').val(exp_id);
+										$('#edit_date').val(value[expense_date]);
+										$('#edit_amt').val(value[amount]);
+										$('#edit_name').val(value[label_name]);
+										$('#edit_name').attr('disabled', 'disabled');
+									});
+									$('#myModal').modal('show');
+								}
+							});
+				 
+				});
+				
+				$(document).on("click","#delb",function(){
+				
+				  
+				  var exp_id=$(this).closest('tr').find('.expid').text();
+				   
+				 
+					$.ajax({
+								type: "GET",
+								url: "delete_expense.php",
+								data:{
+								     
+									 'exp_id':exp_id,
+								},
+								success: function(response){
+									alert(response);
+								}
+							});
+					});
+				
+				
+				
+		});
+		function getdata()
+		{
+			$.ajax({
+				type: "GET",
+				url: "fetch_expenses.php",
+				success: function(response){
+					$.each(response,function(key,value){
+							console.log(value);
+						$('.expdata').append(
+							'<tr>'+
+								'<td class="expid">'+ value['exp_id']+'</td>\
+								<td class="expd">'+ value['expense_date']+'</td>\
+								<td class="labnam">'+ value['label_name']+'</td>\
+								<td class="amt">'+ value['amount']+'</td>\
+								<td>\
+									<button  id="btedit" class="btn btn-primary" type="button">edit</button>\
+									<button id="delb" class="btn btn-danger" type="button">delete</button>\
+								</td>\
+							</tr>')
+					});
+				}
+			
+			})
+		}
+		
+		function getdata_label(){
+		$.ajax({  
+					url: "fetch_labeln.php",  
+					method:"GET",
+					value:{action:'listfetch'},
+					success: function(response){
+								$.each(response,function(key,value){
+										console.log(value['label_name']);
+										
+										
+									$('#explabel').append('<option value='+value['label_name']+'>'+value['label_name']+'</option>');
+						 
+					});  
+					}
+				}); 
+	}
+	</script>
+  </body>
+</html>
